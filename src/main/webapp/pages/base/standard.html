@@ -53,6 +53,8 @@
 											cMaxWeight:$("#maxWeighttext").val(),
 											cMinLength:$("#minLengthtext").val(),
 											cMaxLength:$("#maxLengthtext").val(),
+											cOperator:$("#operatortext").val(),
+											cOperatingCompany:$("#operatingCompanytext").val(),
 						                }),
 						                success:function(result) {
 						                    var message= JSON.stringify(result);
@@ -84,6 +86,8 @@
 						cMaxWeight:'',
 						cMinLength:'',
 						cMaxLength:'',
+						cOperator:'',
+						cOperatingCompany:'',
 					});
 					$("#standardWindow").window('open');
 				}
@@ -211,6 +215,18 @@
 							<td>最大长度</td>
 							<td>
 								<input type="text" name="cMaxLength" id="maxLengthtext" class="easyui-numberbox" required="true" />
+							</td>
+						</tr>
+						<tr>
+							<td>操作人</td>
+							<td>
+								<input type="text" name="cOperator" id="operatortext" class="easyui-validatebox" data-options="required:true"  />
+							</td>
+						</tr>
+						<tr>
+							<td>操作单位</td>
+							<td>
+								<input type="text" name="cOperatingCompany" id="operatingCompanytext" class="easyui-validatebox" data-options="required:true" />
 							</td>
 						</tr>
 						<tr>
