@@ -39,8 +39,32 @@
 				$("#save").click(function(){
 					// 判断是否form中所有表单对象 都是通过校验 
 					if($("#standardForm").form('validate')){
-						// 通过校验 
-						$("#standardForm").submit();
+						// 通过校验
+						     $.ajax({
+						 				url : "http://localhost:8082/logistics-bos-controller/standard/saveData",
+						                type : "POST",
+						                async:true,
+						                jsonp:'jsoncallback',
+						                contentType : "application/json;charset=UTF-8",
+						                data : JSON.stringify({
+						                    cId : $("#idtext").val(),
+						                    cName:$("#nametext").val(),
+											cMinWeight:$("#minWeighttext").val(),
+											cMaxWeight:$("#maxWeighttext").val(),
+											cMinLength:$("#minLengthtext").val(),
+											cMaxLength:$("#maxLengthtext").val(),
+						                }),
+						                success:function(result) {
+						                    var message= JSON.stringify(result);
+						                    $("#result-box").html("操作成功");
+						                    alert("操作成功");
+						                    window.location.reload(); //刷新本页面
+						                },
+						                error:function(result){
+						                    $("#result-box").html("操作失败");
+						                    alert("操作失败");
+						                }
+						            });
 					}else{
 						$.messager.alert("警告","表单中还存在需要一些非法内容","warning");						
 					}
@@ -53,6 +77,14 @@
 				text : '增加',
 				iconCls : 'icon-add',
 				handler : function(){
+					$("#standardForm").form('load',{
+						cId:'',
+						cName:'',
+						cMinWeight:'',
+						cMaxWeight:'',
+						cMinLength:'',
+						cMaxLength:'',
+					});
 					$("#standardWindow").window('open');
 				}
 			}, {
@@ -138,8 +170,7 @@
 
 			<div region="center" style="overflow:auto;padding:5px;" border="false">
 				
-				<form id="standardForm" 
-					action="../../standard_save.action" method="post">
+				<form id="standardForm" method="post">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td >收派标准信息
@@ -147,40 +178,43 @@
 								
 							</td>
 							<td>
-								<input type="text" name="cId" disabled="disabled"/>
+								<input type="text" name="cId" id="idtext" disabled="disabled" class="easyui-numberbox" required="true"/>
 							</td>
 						</tr>
 						<tr>
 							<td>收派标准名称</td>
 							<td>
-								<input type="text" name="cName" 
+								<input type="text" name="cName" id="nametext"
 									class="easyui-validatebox" data-options="required:true" />
 							</td>
 						</tr>
 						<tr>
 							<td>最小重量</td>
 							<td>
-								<input type="text" name="cMinWeight" 
+								<input type="text" name="cMinWeight" id="minWeighttext"
 										class="easyui-numberbox" required="true" />
 							</td>
 						</tr>
 						<tr>
 							<td>最大重量</td>
 							<td>
-								<input type="text" name="cMaxWeight" class="easyui-numberbox" required="true" />
+								<input type="text" name="cMaxWeight" id="maxWeighttext" class="easyui-numberbox" required="true" />
 							</td>
 						</tr>
 						<tr>
 							<td>最小长度</td>
 							<td>
-								<input type="text" name="cMinLength" class="easyui-numberbox" required="true" />
+								<input type="text" name="cMinLength" id="minLengthtext" class="easyui-numberbox" required="true" />
 							</td>
 						</tr>
 						<tr>
 							<td>最大长度</td>
 							<td>
-								<input type="text" name="cMaxLength" class="easyui-numberbox" required="true" />
+								<input type="text" name="cMaxLength" id="maxLengthtext" class="easyui-numberbox" required="true" />
 							</td>
+						</tr>
+						<tr>
+							<span class="glyphicon" id="result-box"></span><br>
 						</tr>
 					</table>
 				</form>
