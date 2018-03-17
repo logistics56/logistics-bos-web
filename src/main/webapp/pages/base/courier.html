@@ -15,9 +15,6 @@
 		<script type="text/javascript" src="../../js/easyui/ext/jquery.portal.js"></script>
 		<script type="text/javascript" src="../../js/easyui/ext/jquery.cookie.js"></script>
 		<script src="../../js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
-		<link rel="stylesheet" type="text/css" href="../../css/xcConfirm.css"/>
-		<script src="../../js/xcConfirm.js" type="text/javascript" charset="utf-8"></script>
-		
 		<script type="text/javascript">
 		 $.fn.serializeJson123 = function(){  
             var serializeObj={};  
@@ -93,7 +90,6 @@
 					}
 					// 生成字符串
 					var ids = array.join(",");
-					alert(ids);
 					// 将字符串发送服务器 
 					$.ajax({
 		 				url : "http://localhost:8082/logistics-bos-controller/courier/deleteData",
@@ -285,92 +281,17 @@
 				
 				// 查询按钮事件
 				$("#searchBtn").click(function(){
-					// 将json对象 绑定datagrid上，完成带有条件 查询请求 
-						$.ajax({
-			 				url : "http://localhost:8082/logistics-bos-controller/courier/queryByCourierNum",
-			                type : "POST",
-			                contentType : "application/json;charset=UTF-8",
-			                data : JSON.stringify({
-								cCourierNum:$("#searchByNum").val(),
-			                }),
-			                success:function(result) {
-			                    var params= JSON.stringify(result);
-									
-										
-										
-										
-										
-										var txt=  "工号："
-											+ result.cCourierNum
-											+ ",\n姓名："
-											+ result.cName
-											+ ",\n手机号："
-											+ result.cTelephone
-											+ ",\n查台密码 ："
-											+ result.cCheckPwd
-											+ ",\nPDA号："
-											+ result.cPda
-											+ ",\n取派标准 ："
-											+ result.cStandardName
-											+ ",\n取派员类型："
-											+ result.cType
-											+ ",\n所属单位 ："
-											+ result.cCompany
-											+ ",\n是否作废："
-											+ result.cDeltag
-											+ ",(1:作废，0:使用)\n车型  ："
-											+ result.cVehicleType
-											+ ",\n车牌号   ："
-											+ result.cVehicleNum
-											+ "";
-										var option = {
-											title: "查询结果：点击确定将废弃该条记录",
-											btn: parseInt("0011",2),
-											onOk: function(){
-												$.ajax({
-									 				url : "http://localhost:8082/logistics-bos-controller/courier/deleteData",
-									                type : "POST",
-									                async:true,
-									                jsonp:'jsoncallback',
-									                contentType : "application/json;charset=UTF-8",
-									                data : JSON.stringify({
-									                	ids:result.cId,
-									                }),
-									                success:function(result) {
-									                    var message= JSON.stringify(result);
-									                    $("#result-box").html("操作成功");
-									                    alert("操作成功");
-									                    window.location.reload(); //刷新本页面
-									                },
-									                error:function(result){
-									                    $("#result-box").html("操作失败");
-									                    alert("操作失败");
-									                }
-									            });
-											}
-										}
-										window.wxc.xcConfirm(txt, "custom", option);
-										
-										
-										
-										
-										
-										
-										
-												},
-												error : function(result) {
-													$("#result-box").html(
-															"操作失败");
-													alert("操作失败");
-												}
-											});
-									// 将json对象 绑定datagrid上，完成带有条件 查询请求 
-
-									$("#searchWindow").window('close');
-								});
+			                    $("#grid").datagrid('reload',{
+			                    	cCourierNum:$("#searchByNum").val()
+			                    }); 
+						// 将json对象 绑定datagrid上，完成带有条件 查询请求 
+						
+					 
+					$("#searchWindow").window('close');
+				});
 			});
-
-			function doDblClickRow() {
+		
+			function doDblClickRow(){
 				alert("双击表格数据...");
 			}
 		</script>
@@ -464,7 +385,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="2"><a id="searchBtn" class="easyui-linkbutton" data-options="iconCls:'icon-search'" >查询</a> </td>
+							<td colspan="2"><a id="searchBtn" href="#"class="easyui-linkbutton" data-options="iconCls:'icon-search'" >查询</a> </td>
 						</tr>
 					</table>
 				</form>
