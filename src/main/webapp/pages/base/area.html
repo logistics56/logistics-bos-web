@@ -102,11 +102,7 @@
 				text : '删除',
 				iconCls : 'icon-cancel',
 				handler : doDelete
-			}, {
-				id : 'button-import',
-				text : '导入',
-				iconCls : 'icon-redo'
-			}, {
+			},{
 				id : 'button-search',
 				text :'查询',
 				iconCls: 'icon-search',
@@ -114,7 +110,21 @@
 					$("#searchWindow").window('open');
 				}
 				
-			}];
+			}, {
+				id : 'button-import',
+				text : '导入',
+				iconCls : 'icon-redo'
+			}, {
+				id : 'button-download',
+				text : 'xml导入模板下载',
+				iconCls : 'icon-print',
+				handler : function(){
+					window.open('../../model/AreaModel.xlsx');
+					alert("下载成功");
+				}
+				
+			}
+			];
 			// 定义列
 			var columns = [ [ {
 				field : 'cId',
