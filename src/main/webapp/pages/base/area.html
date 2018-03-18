@@ -202,8 +202,8 @@
 			    			$.messager.alert("警告","只能上传.xls或.xlsx结尾的文件！","warning");
 			    		}
 			    	},
-			    	onComplete : function(response){
-			    		if(response == "0"){
+			    	onComplete : function(data, self, element){
+			    		if(data=='1'){
 			    			alert("文件上传成功！"); //提示框，Excel导入成功
 			    			// 刷新列表 
 			    			$("#grid").datagrid('reload');
