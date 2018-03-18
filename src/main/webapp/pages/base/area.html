@@ -20,19 +20,12 @@
 		<script type="text/javascript">
 	
 			function doAdd(){
-				$("#courierForm").form('load',{
+				$("#areaForm").form('load',{
 					cId:'',
-					cCourierNum:'',
-					cName:'',
-					cTelephone:'',
-					cCheckPwd:'',
-					cPda:'',
-					cStandardId:'',
-					cType:'',
-					cCompany:'',
-					cDeltag:'',
-					cVehicleType:'',
-					cVehicleNum:'',
+					cProvince:'',
+					cCity:'',
+					cDistrict:'',
+					cPostcode:'',
 				});
 				$('#addWindow').window("open");
 			}
@@ -48,9 +41,7 @@
 					// 只选中一行 
 					var row = rows[0]; 
 					// 进行表单回显操作 
-					$("#courierForm").form('load',row);
-					$("#courierCombobox").combobox("select",row.cStandardName);
-					$("input[name='cStandardId']").val(row.cStandardId); //传值需要用到
+					$("#areaForm").form('load',row);
 					// 显示窗口
 					$("#addWindow").window('open');
 				}
@@ -73,7 +64,7 @@
 					var ids = array.join(",");
 					// 将字符串发送服务器 
 					$.ajax({
-		 				url : "http://localhost:8082/logistics-bos-controller/courier/deleteData",
+		 				url : "http://localhost:8082/logistics-bos-controller/area/deleteData",
 		                type : "POST",
 		                async:true,
 		                jsonp:'jsoncallback',
@@ -120,42 +111,41 @@
 				text :'查询',
 				iconCls: 'icon-search',
 				handler : function(){
-					$("#searchForm").form('clear');
 					$("#searchWindow").window('open');
 				}
 				
 			}];
 			// 定义列
 			var columns = [ [ {
-				field : 'id',
+				field : 'cId',
 				checkbox : true,
 			},{
-				field : 'province',
+				field : 'cProvince',
 				title : '省',
 				width : 120,
 				align : 'center'
 			}, {
-				field : 'city',
+				field : 'cCity',
 				title : '市',
 				width : 120,
 				align : 'center'
 			}, {
-				field : 'district',
+				field : 'cDistrict',
 				title : '区',
 				width : 120,
 				align : 'center'
 			}, {
-				field : 'postcode',
+				field : 'cPostcode',
 				title : '邮编',
 				width : 120,
 				align : 'center'
 			}, {
-				field : 'shortcode',
+				field : 'cShortcode',
 				title : '简码',
 				width : 120,
 				align : 'center'
 			}, {
-				field : 'citycode',
+				field : 'cCitycode',
 				title : '城市编码',
 				width : 200,
 				align : 'center'
@@ -175,7 +165,7 @@
 					pageList: [30,50,100],
 					pagination : true,
 					toolbar : toolbar,
-					url : "../../area_pageQuery.action",
+					url : "http://localhost:8082/logistics-bos-controller/area/queryPageData",
 					idField : 'id',
 					columns : columns,
 					onDblClickRow : doDblClickRow
@@ -195,13 +185,10 @@
 			    // 为导入按钮，添加一键上传效果 
 			    $("#button-import").upload({
 			    	// 默认name为file 
-			    	action : '../../area_batchImport.action',
-			    	name:'file2',
-			    	params: {
-			    		'param1':'value1',
-			    		'param2':'value2',
-			    		'rand': Math.random() 
-			    	},
+			    	action : 'http://localhost:8082/logistics-bos-controller/area/fileImport',
+			    	name:'file',
+			    	enctype: 'multipart/form-data',//mime类型，默认即可
+			    	params: {},//请求时额外传递的参数，默认为空
 			    	onSelect :function(){
 			    		// 选中文件后，关闭自动提交 
 			    		this.autoSubmit = false ;
@@ -216,35 +203,32 @@
 			    		}
 			    	},
 			    	onComplete : function(response){
-//			    		alert("文件上传成功！");
-			    		// 刷新列表 
-						$("#grid").datagrid('reload');
-						alert("文件上传成功！");
+			    		if(response == "0"){
+			    			alert("文件上传成功！"); //提示框，Excel导入成功
+			    			// 刷新列表 
+			    			$("#grid").datagrid('reload');
+			            }else{
+			            	alert("文件上传失败！"); //提示框，Excel导入成失败
+			            }
 			    	}
 			    });
 				
 				// 为快递员的保存按钮，设置点击事件
 				$("#save").click(function(){
 					// 判断form元素 是否满足 校验规则
-					if($("#courierCombobox").combobox('getValue')){
+					if($("#areaForm").form('validate')){
 						$.ajax({
-			 				url : "http://localhost:8082/logistics-bos-controller/courier/saveData",
+			 				url : "http://localhost:8082/logistics-bos-controller/area/saveData",
 			                type : "POST",
 			                async:true,
 			                jsonp:'jsoncallback',
 			                contentType : "application/json;charset=UTF-8",
 			                data : JSON.stringify({
 			                	cId:$("#cId").val(),
-								cName:$("#cName").val(),
-								cTelephone:$("#cTelephone").val(),
-								cCheckPwd:$("#cCheckPwd").val(),
-								cPda:$("#cPda").val(),
-								cStandardId:$("#courierCombobox").combobox('getValue'),
-								cType:$("#cType").val(),
-								cCompany:$("#cCompany").val(),
-								cDeltag:$("#cDeltag").val(),
-								cVehicleType:$("#cVehicleType").val(),
-								cVehicleNum:$("#cVehicleNum").val(),
+			                	cProvince:$("#cProvince").val(),
+			                	cCity:$("#cCity").val(),
+			                	cDistrict:$("#cDistrict").val(),
+			                	cPostcode:$("#cPostcode").val(),
 			                }),
 			                success:function(result) {
 			                    var message= JSON.stringify(result);
@@ -266,7 +250,7 @@
 				// 查询按钮事件
 				$("#searchBtn").click(function(){
 			                    $("#grid").datagrid('reload',{
-			                    	cCourierNum:$("#searchByNum").val()
+			                    	searchStr:$("#searchStr").val()
 			                    }); 
 						// 将json对象 绑定datagrid上，完成带有条件 查询请求 
 						
@@ -293,39 +277,36 @@
 			</div>
 
 			<div region="center" style="overflow:auto;padding:5px;" border="false">
-				<form>
+				<form id="areaForm" method="post">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="2">区域信息</td>
-						</tr>
-						<tr>
-							<td>区域编码</td>
 							<td>
-								<input type="text" name="id" class="easyui-validatebox" required="true" />
+								<input type="hidden" name="cId" id="cId" disabled="disabled" class="easyui-validatebox" required="true"/>
 							</td>
 						</tr>
 						<tr>
 							<td>省</td>
 							<td>
-								<input type="text" name="province" class="easyui-validatebox" required="true" />
+								<input type="text" name="cProvince" id="cProvince" class="easyui-validatebox" required="true" />
 							</td>
 						</tr>
 						<tr>
 							<td>市</td>
 							<td>
-								<input type="text" name="city" class="easyui-validatebox" required="true" />
+								<input type="text" name="cCity" id="cCity" class="easyui-validatebox" required="true" />
 							</td>
 						</tr>
 						<tr>
 							<td>区</td>
 							<td>
-								<input type="text" name="district" class="easyui-validatebox" required="true" />
+								<input type="text" name="cDistrict" id="cDistrict" class="easyui-validatebox" required="true" />
 							</td>
 						</tr>
 						<tr>
 							<td>邮编</td>
 							<td>
-								<input type="text" name="postcode" class="easyui-validatebox" required="true" />
+								<input type="text" name="cPostcode" id="cPostcode" class="easyui-validatebox" required="true" />
 							</td>
 						</tr>
 					</table>
@@ -342,25 +323,13 @@
 							<td colspan="2">查询条件</td>
 						</tr>
 						<tr>
-							<td>省份</td>
+							<td>关键字</td>
 							<td>
-								<input type="text" name="province" />
+								<input type="text" name="searchStr" id="searchStr" />
 							</td>
 						</tr>
 						<tr>
-							<td>城市</td>
-							<td>
-								<input type="text" name="city" />
-							</td>
-						</tr>
-						<tr>
-							<td>区（县）</td>
-							<td>
-								<input type="text" name="district" />
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2"><a id="searchBtn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> </td>
+							<td colspan="2"><a id="searchBtn" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> </td>
 						</tr>
 					</table>
 				</form>
