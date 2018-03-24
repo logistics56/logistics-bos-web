@@ -448,152 +448,165 @@
 				});
 			});
 		
-			function doDblClickRow(){
-				alert("双击表格数据...");
-				$('#association_subarea').datagrid( {
-					fit : true,
-					border : true,
-					rownumbers : true,
-					striped : true,
-					url : "../../data/sub_area.json",
-					columns : [ [{
-						field : 'id',
-						title : '分拣编号',
-						width : 120,
-						align : 'center'
-					},{
-						field : 'province',
-						title : '省',
-						width : 120,
-						align : 'center',
-						formatter : function(data,row ,index){
-							if(row.area!=null){
-								return row.area.province;
+			function doDblClickRow(rowIndex, rowData){
+				$('#grid').datagrid("selectRow", rowIndex);
+				var rows = $("#grid").datagrid('getSelections');
+				if(rows.length != 1){
+					$.messager.alert("提示信息","只能双击选中一行","warning");
+				}else{
+					// 只选中一行 
+					var row = rows[0]; 
+					$('#association_subarea').datagrid( {
+						fit : true,
+						border : true,
+						rownumbers : true,
+						striped : true,
+						url : "http://localhost:8082/logistics-bos-controller/subArea/queryByFixedAreaId",
+						queryParams: {          
+			                nodeID: row.cId           
+			              },
+						columns : [ [{
+							field : 'cId',
+							title : '分拣编号',
+							width : 120,
+							align : 'center'
+						},{
+							field : 'province',
+							title : '省',
+							width : 120,
+							align : 'center',
+							formatter : function(data,row ,index){
+								if(row.area!=null){
+									return row.area.cProvince;
+								}
+								return "";
 							}
-							return "";
-						}
-					}, {
-						field : 'city',
-						title : '市',
-						width : 120,
-						align : 'center',
-						formatter : function(data,row ,index){
-							if(row.area!=null){
-								return row.area.city;
+						}, {
+							field : 'city',
+							title : '市',
+							width : 120,
+							align : 'center',
+							formatter : function(data,row ,index){
+								if(row.area!=null){
+									return row.area.cCity;
+								}
+								return "";
 							}
-							return "";
-						}
-					}, {
-						field : 'district',
-						title : '区',
-						width : 120,
-						align : 'center',
-						formatter : function(data,row ,index){
-							if(row.area!=null){
-								return row.area.district;
+						}, {
+							field : 'district',
+							title : '区',
+							width : 120,
+							align : 'center',
+							formatter : function(data,row ,index){
+								if(row.area!=null){
+									return row.area.cDistrict;
+								}
+								return "";
 							}
-							return "";
-						}
-					}, {
-						field : 'addresskey',
-						title : '关键字',
-						width : 120,
-						align : 'center'
-					}, {
-						field : 'startnum',
-						title : '起始号',
-						width : 100,
-						align : 'center'
-					}, {
-						field : 'endnum',
-						title : '终止号',
-						width : 100,
-						align : 'center'
-					} , {
-						field : 'single',
-						title : '单双号',
-						width : 100,
-						align : 'center'
-					} , {
-						field : 'assistKeyWords',
-						title : '辅助关键字',
-						width : 100,
-						align : 'center'
-					} ] ]
-				});
-				$('#association_customer').datagrid( {
-					fit : true,
-					border : true,
-					rownumbers : true,
-					striped : true,
-					url : "../../data/association_customer.json",
-					columns : [[{
-						field : 'id',
-						title : '客户编号',
-						width : 120,
-						align : 'center'
-					},{
-						field : 'name',
-						title : '客户名称',
-						width : 120,
-						align : 'center'
-					}, {
-						field : 'company',
-						title : '所属单位',
-						width : 120,
-						align : 'center'
-					}]]
-				});
-				$('#association_courier').datagrid({
-					fit : true,
-					border : true,
-					rownumbers : true,
-					striped : true,
-					url : "../../data/courier.json",
-					columns : [[{
-						field : 'id',
-						title : '编号',
-						width : 120,
-						align : 'center'
-					},{
-						field : 'courierNum',
-						title : '快递员工号',
-						width : 120,
-						align : 'center'
-					},{
-						field : 'name',
-						title : '快递员姓名',
-						width : 120,
-						align : 'center'
-					}, {
-						field : 'standard.name',
-						title : '收派标准',
-						width : 120,
-						align : 'center',
-						formatter : function(value,row,index){
-							if(row.standard != null){
-								return row.standard.name;
+						}, {
+							field : 'cKeyWords',
+							title : '关键字',
+							width : 120,
+							align : 'center'
+						}, {
+							field : 'cStartNum',
+							title : '起始号',
+							width : 100,
+							align : 'center'
+						}, {
+							field : 'cEndnum',
+							title : '终止号',
+							width : 100,
+							align : 'center'
+						} , {
+							field : 'cSingle',
+							title : '单双号',
+							width : 100,
+							align : 'center',
+							formatter: function(value,rowData,rowIndex){
+								if(value=='0'){
+									return "单双号";
+								}else if(value=="1"){
+									return "单号";
+								}else{
+									return "双号";
+								}
 							}
-							return null ; 
-						}
-					}, {
-						field : 'taketime.name',
-						title : '收派时间',
-						width : 120,
-						align : 'center',
-						formatter : function(value,row,index){
-							if(row.taketime != null){
-								return row.taketime.name;
-							}
-							return null ; 
-						}
-					}, {
-						field : 'company',
-						title : '所属单位',
-						width : 120,
-						align : 'center'
-					}]]
-				});
+						} , {
+							field : 'cAssistKeyWords',
+							title : '辅助关键字',
+							width : 100,
+							align : 'center'
+						} ] ]
+					});
+					$('#association_customer').datagrid( {
+						fit : true,
+						border : true,
+						rownumbers : true,
+						striped : true,
+						url : "http://localhost:8082/logistics-bos-controller/customer/queryByFixedAreaId",
+						queryParams: {          
+			                nodeID: row.cId           
+			              },
+						columns : [[{
+							field : 'cId',
+							title : '客户编号',
+							width : 120,
+							align : 'center'
+						},{
+							field : 'cUsername',
+							title : '客户名称',
+							width : 120,
+							align : 'center'
+						}, {
+							field : 'cCompany',
+							title : '所属单位',
+							width : 120,
+							align : 'center'
+						}]]
+					});
+					$('#association_courier').datagrid({
+						fit : true,
+						border : true,
+						rownumbers : true,
+						striped : true,
+						url : "http://localhost:8082/logistics-bos-controller/courier/queryByFixedAreaId",
+						queryParams: {          
+			                nodeID: row.cId           
+			              },
+						columns : [[{
+							field : 'cId',
+							title : '编号',
+							width : 120,
+							align : 'center'
+						},{
+							field : 'cCourierNum',
+							title : '快递员工号',
+							width : 120,
+							align : 'center'
+						},{
+							field : 'cName',
+							title : '快递员姓名',
+							width : 120,
+							align : 'center'
+						}, {
+							field : 'cStandardName',
+							title : '收派标准',
+							width : 120,
+							align : 'center'
+						}, {
+							field : 'takeTimeName',
+							title : '收派时间',
+							width : 120,
+							align : 'center'
+						}, {
+							field : 'cCompany',
+							title : '所属单位',
+							width : 120,
+							align : 'center'
+						}]]
+					});
+				}
 			}
 		</script>
 	</head>
