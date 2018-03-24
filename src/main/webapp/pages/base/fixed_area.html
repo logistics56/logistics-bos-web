@@ -66,32 +66,62 @@
 						interval :500 // 每0.5秒加载10%, 5秒加载完
 					});
 					
-					// 发起Ajax请求    
-					$.post("../../fixedArea_findNoAssociationCustomers.action", function(data){ //
-						// 清空列表
-						$("#noassociationSelect").empty();
-						
-						// 查询所有 未关联定区客户列表
-						$(data).each(function(){
-							var option = $("<option value='"+this.cId+"'>"+this.username+"("+this.address+")</option>");
-							$("#noassociationSelect").append(option);
-						});
-						
-						// 请求结束后，关闭进度条
-						$.messager.progress('close');
-						// 弹出关联窗口 
-						$('#customerWindow').window('open');
-					});
-					
-					$.post("../../fixedArea_findHasAssociationFixedAreaCustomers.action",{"id":rows[0].cId} , function(data){
-						// 清空列表
-						$("#associationSelect").empty();
-						// 查询所有 关联当前选中定区客户列表
-						$(data).each(function(){
-							var option = $("<option value='"+this.id+"'>"+this.username+"("+this.address+")</option>");
-							$("#associationSelect").append(option);
-						});
-					});
+					// 发起Ajax请求  
+					//查询未关联定区的用户
+					$.ajax({
+			 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/findCustomers",
+			                type : "POST",
+			                async:true,
+			                jsonp:'jsoncallback',
+			                contentType : "application/json;charset=UTF-8",
+			                data : JSON.stringify({
+			                	id:'',
+			                }),
+			                success:function(data) {
+			                	// 清空列表
+								$("#noassociationSelect").empty();
+								
+								// 查询所有 未关联定区客户列表
+								$(data).each(function(){
+									var option = $("<option value='"+this.cId+"'>"+this.cUsername+"("+this.cAddress+")</option>");
+									$("#noassociationSelect").append(option);
+								});
+								
+								// 请求结束后，关闭进度条
+								$.messager.progress('close');
+								// 弹出关联窗口 
+								$('#customerWindow').window('open');
+			                },
+			                error:function(result){
+			                    $("#result-box").html("操作失败");
+			                    alert("操作失败");
+			                }
+			            });
+					//查询关联该定区的用户
+					$.ajax({
+		 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/findCustomers",
+		                type : "POST",
+		                async:true,
+		                jsonp:'jsoncallback',
+		                contentType : "application/json;charset=UTF-8",
+		                data : JSON.stringify({
+		                	id:rows[0].cId,
+		                }),
+		                success:function(data) {
+		                	// 清空列表
+							$("#associationSelect").empty();
+							// 查询所有 关联当前选中定区客户列表
+							$(data).each(function(){
+								var option = $("<option value='"+this.cId+"'>"+this.cUsername+"("+this.cAddress+")</option>");
+								$("#associationSelect").append(option);
+							});
+		                },
+		                error:function(result){
+		                    $("#result-box").html("操作失败");
+		                    alert("操作失败");
+		                }
+		            });
+
 					
 				}else{
 					// 没有选 或者 选了多个定区 
@@ -279,9 +309,30 @@
 				// 为关联客户按钮，添加click事件
 				$("#associationBtn").click(function(){
 					// 选中所有 已关联定区客户select中选项 
+					$("#noassociationSelect option").attr("selected","selected");
 					$("#associationSelect option").attr("selected","selected");
-					// 提交表单
-					$("#customerForm").submit();
+					$.ajax({
+		 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/CustomersToFixedArea",
+		                type : "POST",
+		                async:true,
+		                jsonp:'jsoncallback',
+		                contentType : "application/json;charset=UTF-8",
+		                data : JSON.stringify({
+		                	associationCustomerIds:$(".associationCustomerIds").val(),
+		                	noassociationCustomerIds:$(".noassociationCustomerIds").val(),
+		                	customerFixedAreaId:$("#customerFixedAreaId").val()
+		                }),
+		                success:function(result) {
+		                    var message= JSON.stringify(result);
+		                    $("#result-box").html("操作成功");
+			                    alert("操作成功");
+			                    window.location.reload(); //刷新本页面
+		                },
+		                error:function(result){
+		                    $("#result-box").html("操作失败");
+		                    alert("操作失败");
+		                }
+		            });
 				});
 				
 				// 为关联快递员按钮，添加click事件
@@ -539,8 +590,7 @@
 		<div class="easyui-window" title="关联客户窗口" id="customerWindow" modal="true"
 			collapsible="false" closed="true" minimizable="false" maximizable="false" style="top:20px;left:200px;width: 700px;height: 300px;">
 			<div style="overflow:auto;padding:5px;" border="false">
-				<form id="customerForm" 
-					action="../../fixedArea_associationCustomersToFixedArea.action" method="post">
+				<form id="customerForm"  method="post">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="3">关联客户</td>
@@ -549,7 +599,8 @@
 							<td>
 								<!-- 存放定区编号 -->
 								<input type="hidden" name="id" id="customerFixedAreaId" />
-								<select id="noassociationSelect" multiple="multiple" size="10" style="width: 300px;"></select>
+								未关联定区的用户:<br>
+								<select id="noassociationSelect" class="noassociationCustomerIds" multiple="multiple" size="10" style="width: 300px;"></select>
 							</td>
 							<td>
 								<input type="button" value="》》" id="toRight">
@@ -557,7 +608,8 @@
 								<input type="button" value="《《" id="toLeft">
 							</td>
 							<td>
-								<select id="associationSelect" name="customerIds" multiple="multiple" size="10" style="width: 300px;"></select>
+								关联该定区的用户:<br>
+								<select id="associationSelect" name="customerIds" class="associationCustomerIds" multiple="multiple" size="10" style="width: 300px;"></select>
 							</td>
 						</tr>
 						<tr>
