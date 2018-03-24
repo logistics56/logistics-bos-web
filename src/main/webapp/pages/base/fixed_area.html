@@ -129,6 +129,85 @@
 				}
 			}
 			
+			
+			// 关联快递员窗口弹出
+			function doAssociationCouriers(){
+				// 判定用户是否只选择了一个定区 
+				var rows = $("#grid").datagrid('getSelections');
+				// 只选择了一行 
+				if(rows.length == 1){
+					// 只选择了一个定区
+					// 保存选中定区id 到表单隐藏域
+					$("#courierFixedAreaId").val(rows[0].cId);
+					
+					// 显示进度条
+					$.messager.progress({
+						interval :500 // 每0.5秒加载10%, 5秒加载完
+					});
+					
+					// 发起Ajax请求  
+					//查询未关联定区的快递员
+					$.ajax({
+			 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/findCouriers",
+			                type : "POST",
+			                async:true,
+			                jsonp:'jsoncallback',
+			                contentType : "application/json;charset=UTF-8",
+			                data : JSON.stringify({
+			                	id:'',
+			                }),
+			                success:function(data) {
+			                	// 清空列表
+								$("#courierNoassociationSelect").empty();
+								
+								// 查询所有 未关联定区客户列表
+								$(data).each(function(){
+									var option = $("<option value='"+this.cId+"'>"+this.cName+"("+this.cCourierNum+")</option>");
+									$("#courierNoassociationSelect").append(option);
+								});
+								
+								// 请求结束后，关闭进度条
+								$.messager.progress('close');
+								// 弹出定区关联快递员 窗口 
+								$("#courierWindow").window('open');
+			                },
+			                error:function(result){
+			                    $("#result-box").html("操作失败");
+			                    alert("操作失败");
+			                }
+			            });
+					//查询关联该定区的快递员
+					$.ajax({
+		 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/findCouriers",
+		                type : "POST",
+		                async:true,
+		                jsonp:'jsoncallback',
+		                contentType : "application/json;charset=UTF-8",
+		                data : JSON.stringify({
+		                	id:rows[0].cId,
+		                }),
+		                success:function(data) {
+		                	// 清空列表
+							$("#courierAssociationSelect").empty();
+							// 查询所有 关联当前选中定区客户列表
+							$(data).each(function(){
+								var option = $("<option value='"+this.cId+"'>"+this.cName+"("+this.cCourierNum+")</option>");
+								$("#courierAssociationSelect").append(option);
+							});
+		                },
+		                error:function(result){
+		                    $("#result-box").html("操作失败");
+		                    alert("操作失败");
+		                }
+		            });
+
+					
+				}else{
+					// 没有选 或者 选了多个定区 
+					$.messager.alert('警告','定区关联客户必须（只能）选择一个定区','warning');
+				}
+			}
+			
 			//工具栏
 			var toolbar = [ {
 				id : 'button-search',	
@@ -154,20 +233,7 @@
 				id : 'button-association-courier',
 				text : '关联快递员',
 				iconCls : 'icon-sum',
-				handler : function(){
-					// 判断是否已经选中了一个定区，弹出关联快递员窗口 
-					var rows = $("#grid").datagrid('getSelections');
-					if(rows.length==1){
-						// 只选择了一个定区
-						// 弹出定区关联快递员 窗口 
-						$("#courierWindow").window('open');
-						// 保存选中定区id 到表单隐藏域
-						$("#courierFixedAreaId").val(rows[0].cId);
-					}else{
-						// 没有选中定区，或者选择 了多个定区
-						$.messager.alert("警告","关联快递员,只能（必须）选择一个定区","warning");
-					}
-				}
+				handler : doAssociationCouriers
 			}];
 			// 定义列
 			var columns = [ [ {
@@ -296,12 +362,12 @@
 					}
 				});
 				
-				// 向右移动按钮 
+				// 客户向右移动按钮 
 				$("#toRight").click(function(){
 					$("#associationSelect").append($("#noassociationSelect option:selected"));
 				});
 				
-				// 向左移动按钮
+				// 客户向左移动按钮
 				$("#toLeft").click(function(){
 					$("#noassociationSelect").append($("#associationSelect option:selected"));
 				});
@@ -335,13 +401,49 @@
 		            });
 				});
 				
+				
+				// 快递员向右移动按钮 
+				$("#courierToRight").click(function(){
+					$("#courierAssociationSelect").append($("#courierNoassociationSelect option:selected"));
+				});
+				
+				// 快递员向左移动按钮
+				$("#courierToLeft").click(function(){
+					$("#courierNoassociationSelect").append($("#courierAssociationSelect option:selected"));
+				});
+				
 				// 为关联快递员按钮，添加click事件
 				$("#associationCourierBtn").click(function(){
 					// 判断表单是否通过校验
-					if($("#courierForm").form('validate')){
-						$("#courierForm").submit();
+					if($("#takeTimeId").combobox('getValue')!=0){
+						$("#courierNoassociationSelect option").attr("selected","selected");
+						// 选中所有 已关联定区客户select中选项 
+						$("#courierAssociationSelect option").attr("selected","selected");
+						$.ajax({
+			 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/couriersAndTakeTime",
+			                type : "POST",
+			                async:true,
+			                jsonp:'jsoncallback',
+			                contentType : "application/json;charset=UTF-8",
+			                data : JSON.stringify({
+			                	associationCourierIds:$(".associationCourierIds").val(),
+			                	noassociationCourierIds:$(".noassociationCourierIds").val(),
+			                	courierFixedAreaId:$("#courierFixedAreaId").val(),
+			                	takeTimeId:$("#takeTimeId").combobox('getValue'),
+			                }),
+			                success:function(result) {
+			                    var message= JSON.stringify(result);
+			                    $("#result-box").html("操作成功");
+				                    alert("操作成功");
+				                    window.location.reload(); //刷新本页面
+			                },
+			                error:function(result){
+			                    $("#result-box").html("操作失败");
+			                    alert("操作失败");
+			                }
+			            });
 					}else{
-						$.messager.alert("警告","表单中存在非法数据","warning");
+						$.messager.alert("警告","请选择收派时间","warning");
 					}
 				});
 			});
@@ -622,10 +724,9 @@
 		
 		<!-- 关联快递员窗口 -->
 		<div class="easyui-window" title="关联快递员窗口" id="courierWindow" modal="true"
-			collapsible="false" closed="true" minimizable="false" maximizable="false" style="top:20px;left:200px;width: 700px;height: 300px;">
+			collapsible="false" closed="true" minimizable="false" maximizable="false" style="top:20px;left:200px;width: 800px;height: 400px;">
 			<div style="overflow:auto;padding:5px;" border="false">
-				<form id="courierForm" 
-					action="../../fixedArea_associationCourierToFixedArea.action" method="post">
+				<form id="courierForm" method="post">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="2">关联快递员</td>
@@ -635,17 +736,25 @@
 							<td>
 								<!-- 存放定区编号 -->
 								<input type="hidden" name="id" id="courierFixedAreaId" />
-								<input type="text" name="courierId" class="easyui-combobox" required="true" 
-									data-options="url:'../../courier_findnoassociation.action',
-										valueField:'id',textField:'info'"/>
+								未关联定区的快递员:<br>
+								<select id="courierNoassociationSelect" class="noassociationCourierIds" multiple="multiple" size="10" style="width: 300px;"></select>
+							</td>
+							<td>
+								<input type="button" value="》》" id="courierToRight">
+								<br/>
+								<input type="button" value="《《" id="courierToLeft">
+							</td>
+							<td>
+								关联该定区的快递员:<br>
+								<select id="courierAssociationSelect" name="courierIds" class="associationCourierIds" multiple="multiple" size="10" style="width: 300px;"></select>
 							</td>
 						</tr>
 						<tr>
 							<td>选择收派时间</td>
 							<td>
-								<input type="text" name="takeTimeId" class="easyui-combobox" required="true"
-									data-options="url:'../../taketime_findAll.action', 
-									valueField:'id',textField:'name'" />
+								<input type="text" name="takeTimeId" id="takeTimeId" class="easyui-combobox"
+									data-options="url:'http://localhost:8082/logistics-bos-controller/takeTime/queryAll', 
+									required:true,valueField:'cId',textField:'cName'" />
 							</td>
 						</tr>
 						<tr>
