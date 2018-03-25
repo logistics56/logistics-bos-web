@@ -72,7 +72,7 @@
 					var ids = array.join(",");
 					// 将字符串发送服务器 
 					$.ajax({
-		 				url : "http://localhost:8082/logistics-bos-controller/courier/deleteData",
+		 				url : "http://localhost:8081/logistics-bos-controller/courier/deleteData",
 		                type : "POST",
 		                async:true,
 		                jsonp:'jsoncallback',
@@ -202,7 +202,7 @@
 					pageList: [30,50,100],
 					pagination : true,
 					toolbar : toolbar,
-					url : "http://localhost:8082/logistics-bos-controller/courier/queryPageData",
+					url : "http://localhost:8081/logistics-bos-controller/courier/queryPageData",
 					idField : 'id',
 					columns : columns,
 					onDblClickRow : doDblClickRow
@@ -225,7 +225,7 @@
 					// 判断form元素 是否满足 校验规则
 					if($("#courierCombobox").combobox('getValue')){
 						$.ajax({
-			 				url : "http://localhost:8082/logistics-bos-controller/courier/saveData",
+			 				url : "http://localhost:8081/logistics-bos-controller/courier/saveData",
 			                type : "POST",
 			                async:true,
 			                jsonp:'jsoncallback',
@@ -326,7 +326,7 @@
 								<input type="text" name="cStandardId" id="courierCombobox"
 										class="easyui-combobox" 
 										data-options="required:true,valueField:'cId',textField:'cName',
-											url:'http://localhost:8082/logistics-bos-controller/standard/queryAll'"/>   <!--  -->
+											url:'http://localhost:8081/logistics-bos-controller/standard/queryAll'"/>   <!--  -->
 							</td>
 						</tr>
 						<tr>

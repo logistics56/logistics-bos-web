@@ -69,7 +69,7 @@
 					// 发起Ajax请求  
 					//查询未关联定区的用户
 					$.ajax({
-			 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/findCustomers",
+			 				url : "http://localhost:8081/logistics-bos-controller/fixedArea/findCustomers",
 			                type : "POST",
 			                async:true,
 			                jsonp:'jsoncallback',
@@ -99,7 +99,7 @@
 			            });
 					//查询关联该定区的用户
 					$.ajax({
-		 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/findCustomers",
+		 				url : "http://localhost:8081/logistics-bos-controller/fixedArea/findCustomers",
 		                type : "POST",
 		                async:true,
 		                jsonp:'jsoncallback',
@@ -148,7 +148,7 @@
 					// 发起Ajax请求  
 					//查询未关联定区的快递员
 					$.ajax({
-			 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/findCouriers",
+			 				url : "http://localhost:8081/logistics-bos-controller/fixedArea/findCouriers",
 			                type : "POST",
 			                async:true,
 			                jsonp:'jsoncallback',
@@ -178,7 +178,7 @@
 			            });
 					//查询关联该定区的快递员
 					$.ajax({
-		 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/findCouriers",
+		 				url : "http://localhost:8081/logistics-bos-controller/fixedArea/findCouriers",
 		                type : "POST",
 		                async:true,
 		                jsonp:'jsoncallback',
@@ -286,7 +286,7 @@
 					pageList: [30,50,100],
 					pagination : true,
 					toolbar : toolbar,
-					url : "http://localhost:8082/logistics-bos-controller/fixedArea/queryPageData",
+					url : "http://localhost:8081/logistics-bos-controller/fixedArea/queryPageData",
 					idField : 'id',
 					columns : columns,
 					onDblClickRow : doDblClickRow
@@ -328,7 +328,7 @@
 					// 判断form元素 是否满足 校验规则
 					if($("#fixedAreaForm").form('validate')){
 						$.ajax({
-			 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/saveData",
+			 				url : "http://localhost:8081/logistics-bos-controller/fixedArea/saveData",
 			                type : "POST",
 			                async:true,
 			                jsonp:'jsoncallback',
@@ -378,7 +378,7 @@
 					$("#noassociationSelect option").attr("selected","selected");
 					$("#associationSelect option").attr("selected","selected");
 					$.ajax({
-		 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/CustomersToFixedArea",
+		 				url : "http://localhost:8081/logistics-bos-controller/fixedArea/CustomersToFixedArea",
 		                type : "POST",
 		                async:true,
 		                jsonp:'jsoncallback',
@@ -420,7 +420,7 @@
 						// 选中所有 已关联定区客户select中选项 
 						$("#courierAssociationSelect option").attr("selected","selected");
 						$.ajax({
-			 				url : "http://localhost:8082/logistics-bos-controller/fixedArea/couriersAndTakeTime",
+			 				url : "http://localhost:8081/logistics-bos-controller/fixedArea/couriersAndTakeTime",
 			                type : "POST",
 			                async:true,
 			                jsonp:'jsoncallback',
@@ -461,7 +461,7 @@
 						border : true,
 						rownumbers : true,
 						striped : true,
-						url : "http://localhost:8082/logistics-bos-controller/subArea/queryByFixedAreaId",
+						url : "http://localhost:8081/logistics-bos-controller/subArea/queryByFixedAreaId",
 						queryParams: {          
 			                nodeID: row.cId           
 			              },
@@ -544,7 +544,7 @@
 						border : true,
 						rownumbers : true,
 						striped : true,
-						url : "http://localhost:8082/logistics-bos-controller/customer/queryByFixedAreaId",
+						url : "http://localhost:8081/logistics-bos-controller/customer/queryByFixedAreaId",
 						queryParams: {          
 			                nodeID: row.cId           
 			              },
@@ -570,7 +570,7 @@
 						border : true,
 						rownumbers : true,
 						striped : true,
-						url : "http://localhost:8082/logistics-bos-controller/courier/queryByFixedAreaId",
+						url : "http://localhost:8081/logistics-bos-controller/courier/queryByFixedAreaId",
 						queryParams: {          
 			                nodeID: row.cId           
 			              },
@@ -766,7 +766,7 @@
 							<td>选择收派时间</td>
 							<td>
 								<input type="text" name="takeTimeId" id="takeTimeId" class="easyui-combobox"
-									data-options="url:'http://localhost:8082/logistics-bos-controller/takeTime/queryAll', 
+									data-options="url:'http://localhost:8081/logistics-bos-controller/takeTime/queryAll', 
 									required:true,valueField:'cId',textField:'cName'" />
 							</td>
 						</tr>

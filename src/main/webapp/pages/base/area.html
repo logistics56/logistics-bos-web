@@ -64,7 +64,7 @@
 					var ids = array.join(",");
 					// 将字符串发送服务器 
 					$.ajax({
-		 				url : "http://localhost:8082/logistics-bos-controller/area/deleteData",
+		 				url : "http://localhost:8081/logistics-bos-controller/area/deleteData",
 		                type : "POST",
 		                async:true,
 		                jsonp:'jsoncallback',
@@ -175,7 +175,7 @@
 					pageList: [30,50,100],
 					pagination : true,
 					toolbar : toolbar,
-					url : "http://localhost:8082/logistics-bos-controller/area/queryPageData",
+					url : "http://localhost:8081/logistics-bos-controller/area/queryPageData",
 					idField : 'id',
 					columns : columns,
 					onDblClickRow : doDblClickRow
@@ -195,7 +195,7 @@
 			    // 为导入按钮，添加一键上传效果 
 			    $("#button-import").upload({
 			    	// 默认name为file 
-			    	action : 'http://localhost:8082/logistics-bos-controller/area/fileImport',
+			    	action : 'http://localhost:8081/logistics-bos-controller/area/fileImport',
 			    	name:'file',
 			    	enctype: 'multipart/form-data',//mime类型，默认即可
 			    	params: {},//请求时额外传递的参数，默认为空
@@ -228,7 +228,7 @@
 					// 判断form元素 是否满足 校验规则
 					if($("#areaForm").form('validate')){
 						$.ajax({
-			 				url : "http://localhost:8082/logistics-bos-controller/area/saveData",
+			 				url : "http://localhost:8081/logistics-bos-controller/area/saveData",
 			                type : "POST",
 			                async:true,
 			                jsonp:'jsoncallback',

@@ -29,7 +29,7 @@
 					pageList: [30,50,100],
 					pagination : true,
 					toolbar : toolbar,
-					url : "http://localhost:8082/logistics-bos-controller/takeTime/queryPageData",
+					url : "http://localhost:8081/logistics-bos-controller/takeTime/queryPageData",
 					idField : 'id',
 					columns : columns
 				});
@@ -40,7 +40,7 @@
 					if($("#takeTimeForm").form('validate')){
 						// 通过校验
 						     $.ajax({
-						 				url : "http://localhost:8082/logistics-bos-controller/takeTime/saveData",
+						 				url : "http://localhost:8081/logistics-bos-controller/takeTime/saveData",
 						                type : "POST",
 						                async:true,
 						                jsonp:'jsoncallback',

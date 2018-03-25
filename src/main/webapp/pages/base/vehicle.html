@@ -33,7 +33,7 @@
 				var ids = array.join(",");
 				// 将字符串发送服务器 
 				$.ajax({
-	 				url : "http://localhost:8082/logistics-bos-controller/vehicle/deleteData",
+	 				url : "http://localhost:8081/logistics-bos-controller/vehicle/deleteData",
 	                type : "POST",
 	                async:true,
 	                jsonp:'jsoncallback',
@@ -68,7 +68,7 @@
 					pageList: [30,50,100],
 					pagination : true,
 					toolbar : toolbar,
-					url : "http://localhost:8082/logistics-bos-controller/vehicle/queryPageData",
+					url : "http://localhost:8081/logistics-bos-controller/vehicle/queryPageData",
 					idField : 'id',
 					columns : columns
 				});
@@ -79,7 +79,7 @@
 					if($("#vehicleForm").form('validate')){
 						// 通过校验
 						     $.ajax({
-						 				url : "http://localhost:8082/logistics-bos-controller/vehicle/saveData",
+						 				url : "http://localhost:8081/logistics-bos-controller/vehicle/saveData",
 						                type : "POST",
 						                async:true,
 						                jsonp:'jsoncallback',

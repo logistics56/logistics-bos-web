@@ -30,7 +30,7 @@
 					pageList: [2,3,15],
 					pagination : true,    //显示分页栏底
 					toolbar : toolbar,    //顶部工具栏
-					url : "http://localhost:8082/logistics-bos-controller/standard/queryPageData",
+					url : "http://localhost:8081/logistics-bos-controller/standard/queryPageData",
 					idField : 'id',
 					columns : columns      //列属性
 				});
@@ -41,7 +41,7 @@
 					if($("#standardForm").form('validate')){
 						// 通过校验
 						     $.ajax({
-						 				url : "http://localhost:8082/logistics-bos-controller/standard/saveData",
+						 				url : "http://localhost:8081/logistics-bos-controller/standard/saveData",
 						                type : "POST",
 						                async:true,
 						                jsonp:'jsoncallback',
