@@ -11,6 +11,11 @@
 <script type="text/javascript">
 //为注册按钮，设置点击事件
 function submitBtn(){
+	if(!compare()){
+		refresh();
+		alert("验证码输入错误");
+		return ;
+	}
 				$.ajax({
 	 				url : "user/login",
 	                type : "POST",
@@ -73,21 +78,18 @@ function submitBtn(){
 						<div class="form-group">
 							<label for="inputvalidate" class="col-sm-3 control-label">验证码</label>
 							<div class="col-sm-4">
-								<input type="text" class="form-control" id="inputaccount" placeholder="请输入验证码">
+								<input type="text" class="form-control" style="width: 110px;height: 30px;" id="checkcode" placeholder="请输入验证码" >
 							</div>
 							<div class="col-sm-4">
-								<img id="loginform:vCode" src="validatecode.jsp"  onclick="javascript:document.getElementById('loginform:vCode'). src='validatecode.jsp?'+Math.random();" />
+								<div id="v_container" style="width: 70px;height: 30px;"></div>
 							</div>
 						</div>
 						
 						
 						<div class="form-group">
 							
-							<div class="col-sm-offset-3 col-sm-4">
+							<div class="col-sm-offset-3 col-sm-5">
 								<input type="checkbox"><span class="size12">　记住用户名</span>
-							</div>
-							<div class="col-sm-4">
-								<a href="#"><span class="size12 forget">忘记密码</span></a>
 							</div>
 						</div>
 						
@@ -105,11 +107,23 @@ function submitBtn(){
 		</section>
 
 		<footer class="clearfix">
-			<div class="container">
-			<p class="text-center">地址：北京市昌平区建材城西路金燕龙办公楼一层 邮编：100096 电话：400-618-4000 传真：010-82935100 </p>
-<p  class="text-center">京ICP备08001421号京公网安备110108007702</p>
-</div>
+		<div style="padding-top: 50px">
+										<p class="text-center">&copy; 2018 版权所有者：李振&nbsp;未经许可本系统任何资料不得转载或下载<br>  </p>
+					<p class="text-center">开发者：李振 &nbsp; 鲁东大学 &nbsp; 信息与电气工程学院 &nbsp; 软件本1401 &nbsp; 学号：20142204876 &nbsp;<a href="mailto:lizhn95@163.com"> Email:lizhn95@163.com </a></p>
+				</div>
 		</footer>
 		</div>
+		
+		<script  type="text/javascript" src="js/gVerify.js"></script>
+		<script>
+		var verifyCode = new GVerify("v_container");
+		function compare(){
+			var res = verifyCode.validate(document.getElementById("checkcode").value);
+			return res;
+		}
+		function refresh(){
+			verifyCode.refresh();
+		}
+	</script>
 	</body>
 </html>

@@ -10,6 +10,9 @@ public class BaseResponse {
 	private int result;
 	private String requestId;
 	
+	private String userName;
+	private int userNum;
+	
 	/**
 	 * 默认返回码为1：成功
 	 */
@@ -65,4 +68,21 @@ public class BaseResponse {
 		this.requestId = requestId;
 	}
 
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public int getUserNum() {
+		return userNum;
+	}
+
+	public void setUserNum(int userNum) {
+		this.userNum = userNum;
+	}
+
+	
 }

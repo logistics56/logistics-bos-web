@@ -28,6 +28,9 @@ import com.logistics.web.module.response.base.ResponseCode;
 @RequestMapping("/user")
 public class UserController {
 	
+	@Autowired
+	UserService userService;
+	
 	@RequestMapping(value = "/login", method = { RequestMethod.POST })
 	public BaseResponse login(@RequestBody UserRequest ref) {
 		BaseResponse response = new BaseResponse();
@@ -53,6 +56,52 @@ public class UserController {
 			response.setResult(ResponseCode.FAILED.getCode());
 			return response;
 		}
+	}
+	
+	@RequestMapping(value = "/logout", method = { RequestMethod.POST })
+	public BaseResponse logout() {
+		BaseResponse response = new BaseResponse();
+		// 基于shiro实现登录
+		Subject subject = SecurityUtils.getSubject();
+		subject.logout();
+		response.setErrorMsg(ResponseCode.SUCCESS.getMsg());
+		response.setResult(ResponseCode.SUCCESS.getCode());
+		return response;
+		
+	}
+	
+	@RequestMapping(value = "/getuser", method = { RequestMethod.POST })
+	public BaseResponse getuser() {
+		BaseResponse response = new BaseResponse();
+		
+		UserDTO user = (UserDTO) SecurityUtils.getSubject().getPrincipal(); 
+		response.setUserName(user.getcUsername());
+		response.setUserNum(user.getcId());
+		response.setErrorMsg(ResponseCode.SUCCESS.getMsg());
+		response.setResult(ResponseCode.SUCCESS.getCode());
+		return response;
+		
+	}
+	
+	@RequestMapping(value = "/changepwd", method = { RequestMethod.POST })
+	public BaseResponse changepwd(@RequestBody UserRequest ref) {
+		BaseResponse response = new BaseResponse();
+		
+		UserDTO user = (UserDTO) SecurityUtils.getSubject().getPrincipal(); 
+		
+		int num =userService.updatePWD(user.getcId(), ref.getPassword());
+		if(num == 1){
+			// 基于shiro实现登录
+			Subject subject = SecurityUtils.getSubject();
+			subject.logout();
+			response.setErrorMsg(ResponseCode.SUCCESS.getMsg());
+			response.setResult(ResponseCode.SUCCESS.getCode());
+		}else{
+			response.setErrorMsg("修改失败");
+			response.setResult(ResponseCode.FAILED.getCode());
+		}
+		return response;
+		
 	}
 
 }

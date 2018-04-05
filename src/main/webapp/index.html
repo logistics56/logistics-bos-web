@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>BOS管理系统 首页</title>
+		<title>后台管理系统 首页</title>
 		<!-- 导入jquery核心类库 -->
 		<script type="text/javascript" src="./js/jquery-1.8.3.js"></script>
 		<!-- 导入easyui类库 -->
@@ -15,6 +15,28 @@
 		<script src="./js/ztree/jquery.ztree.all-3.5.js" type="text/javascript"></script>
 		<script src="./js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
 		<script type="text/javascript">
+		window.onload = function(){
+			$.ajax({
+ 				url : "user/getuser",
+                type : "POST",
+                async:true,
+                jsonp:'jsoncallback',
+                contentType : "application/json;charset=UTF-8",
+                data : JSON.stringify({
+                }),
+                success:function(result) {
+                    var message= JSON.stringify(result);
+                    if(result.result == 1){
+                    	$("#userName").html(result.userName);//成功
+                    	$("#userNum").val(result.userNum);//成功
+
+                    }else{
+                    }
+                },
+                error:function(result){
+                }
+            });
+		}
 			$(function() {
 				/** 
 				   Ztree菜单通用配置 
@@ -45,17 +67,51 @@
 				window.setTimeout(function(){
 					$.messager.show({
 						title:"消息提示",
-						msg:'欢迎登录，超级管理员！ <a href="javascript:void" onclick="top.showAbout();">联系管理员</a>',
+						msg:'欢迎登录駃达后台系统 <a href="javascript:void" onclick="top.showAbout();">联系管理员</a>',
 						timeout:5000
 					});
 				},3000);
 				
+				//修改密码弹窗中取消关闭弹窗
 				$("#btnCancel").click(function(){
 					$('#editPwdWindow').window('close');
 				});
 				
+				//修改密码弹窗中确定修改
 				$("#btnEp").click(function(){
-					alert("修改密码");
+					var txtNewPass = $('#txtNewPass').val();
+                	var txtRePass = $('#txtRePass').val();
+                	if(txtNewPass == "" || txtRePass == ""){
+                		alert("输入的值不能为空");
+                		return false;
+                	}
+					if(txtNewPass != txtRePass){
+						alert("两次输入的值不同");
+                		return false;
+					}
+					$.ajax({
+		 				url : "user/changepwd",
+		                type : "POST",
+		                async:true,
+		                jsonp:'jsoncallback',
+		                contentType : "application/json;charset=UTF-8",
+		                data : JSON.stringify({
+		                	password:txtNewPass,
+		                }),
+		                success:function(result) {
+		                    var message= JSON.stringify(result);
+		                    if(result.result == 1){
+		                    	alert("修改成功");
+		                    	window.location.href="login.html"; //成功
+
+		                    }else{
+		                    	alert(result.errorMsg);
+		                    }
+		                },
+		                error:function(result){
+		                    alert("操作失败");
+		                }
+		            });
 				});
 				
 				// 设置全局变量 保存当前正在右键的tabs 标题 
@@ -149,7 +205,29 @@
 				$.messager
 				.confirm('系统提示','您确定要退出本次登录吗?',function(isConfirm) {
 					if (isConfirm) {
-						location.href = './user_logout.action';
+						$.ajax({
+			 				url : "user/logout",
+			                type : "POST",
+			                async:true,
+			                jsonp:'jsoncallback',
+			                contentType : "application/json;charset=UTF-8",
+			                data : JSON.stringify({
+			                	
+			                }),
+			                success:function(result) {
+			                    var message= JSON.stringify(result);
+			                    if(result.result == 1){
+			                    	window.location.href="login.html"; //登录成功
+
+			                    }else{
+			                    	alert(result.errorMsg);
+			                    	window.location.href="login.html";
+			                    }
+			                },
+			                error:function(result){
+			                    alert("操作失败");
+			                }
+			            });
 					}
 				});
 			}
@@ -159,7 +237,7 @@
 			}
 			// 版权信息
 			function showAbout(){
-				$.messager.alert("宅急送 v1.0","设计: yuyang<br/> 管理员邮箱: yuyang@itcast.cn <br/> QQ: 117038615");
+				$.messager.alert("駃达v1.0","设计: 李振<br/> 管理员邮箱: lizhn95@163.com <br/> QQ: 2330308699");
 			}
 		</script>
 	</head>
@@ -170,7 +248,7 @@
 				<img src="./images/logo.png" border="0">
 			</div>
 			<div id="sessionInfoDiv" style="position: absolute;right: 5px;top:10px;">
-				[<strong>超级管理员</strong>]，欢迎你！您使用[<strong>192.168.1.100</strong>]IP登录！
+				欢迎<b><span id="userName"></span></b>，登录駃达后台系统！<input type="hidden" id = "userNum">
 			</div>
 			<div style="position: absolute; right: 5px; bottom: 10px; ">
 				<a href="javascript:void(0);" class="easyui-menubutton" data-options="menu:'#layout_north_pfMenu',iconCls:'icon-ok'">更换皮肤</a>
@@ -207,20 +285,11 @@
 				</div>
 			</div>
 		</div>
-		<div data-options="region:'south',border:false" style="height:50px;padding:10px;background:url('./images/header_bg.png') no-repeat right;">
-			<table style="width: 100%;">
-				<tbody>
-					<tr>
-						<td style="width: 300px;">
-							<div style="color: #999; font-size: 8pt;">
-								传智播客 | Powered by <a href="http://www.itcast.cn/">itcast.cn</a>
-							</div>
-						</td>
-						<td style="width: *;" class="co1"><span id="online" style="background: url(./images/online.png) no-repeat left;padding-left:18px;margin-left:3px;font-size:8pt;color:#005590;">在线人数:1</span>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+		<div data-options="region:'south',border:false" style="height:60px;padding:10px;text-align: center;">
+			<div >
+										<p class="text-center">&copy; 2018 版权所有者：李振&nbsp;未经许可本系统任何资料不得转载或下载<br>  </p>
+					<p class="text-center">开发者：李振 &nbsp; 鲁东大学 &nbsp; 信息与电气工程学院 &nbsp; 软件本1401 &nbsp; 学号：20142204876 &nbsp;<a href="mailto:lizhn95@163.com"> Email:lizhn95@163.com </a></p>
+				</div>
 		</div>
 
 		<!--修改密码窗口-->
