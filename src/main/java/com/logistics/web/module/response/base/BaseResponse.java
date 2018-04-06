@@ -12,6 +12,7 @@ public class BaseResponse {
 	
 	private String userName;
 	private int userNum;
+	private String station;
 	
 	/**
 	 * 默认返回码为1：成功
@@ -82,6 +83,14 @@ public class BaseResponse {
 
 	public void setUserNum(int userNum) {
 		this.userNum = userNum;
+	}
+
+	public String getStation() {
+		return station;
+	}
+
+	public void setStation(String station) {
+		this.station = station;
 	}
 
 	

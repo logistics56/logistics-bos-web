@@ -39,6 +39,7 @@
 			                	telephone:$("#telephone").val(),
 			                	birthday:$("input[name=birthday]").val(),
 			                	gender:$("#gender").combobox('getValue'),
+			                	station:$("#station").combobox('getValue'),
 			                	remark:$("#remark").val(),
 			                	roleIds:roleIds,
 			                }),
@@ -120,6 +121,14 @@
 								<option value="">请选择</option>
 								<option value="男">男</option>
 								<option value="女">女</option>
+							</select>
+						</td>
+						<td>是否为管理员:</td>
+						<td>
+							<select name="station" id="station" class="easyui-combobox" style="width: 150px;">
+								<option value="">请选择</option>
+								<option value="1">是</option>
+								<option value="0">否</option>
 							</select>
 						</td>
 					</tr>
