@@ -14,6 +14,7 @@
 		<link rel="stylesheet" href="./js/ztree/zTreeStyle.css" type="text/css" />
 		<script src="./js/ztree/jquery.ztree.all-3.5.js" type="text/javascript"></script>
 		<script src="./js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
+		<script  type="text/javascript" src="js/QuerySession.js"></script>
 		<script type="text/javascript">
 			$(function() {
 				$.ajax({
@@ -30,6 +31,7 @@
 	                    	$("#userName").html(result.userName);//成功
 	                    	$("#userNum").val(result.userNum);//成功
 	                    	$("#station").val(result.station);//成功
+	                    	$.session.set('userNum', JSON.stringify(result.userNum));
 	                    }else{
 	                    }
 	                },
