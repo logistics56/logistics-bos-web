@@ -55,45 +55,6 @@
 					}
 			}
 			
-			function doDelete(){
-				// 获取页面中所有勾选快递员 id 
-				var rows = $("#grid").datagrid('getSelections');
-				if(rows.length != 1){
-					// 没有选中数据 
-					$.messager.alert("警告","作废快递员必须选中一条数据","warning");
-				}else{
-					// 选中数据 
-					// 获取选中所有id ，拼接字符串方法 
-					var array = new Array();
-					for(var i=0; i<rows.length; i++){
-						array.push(rows[i].cId);
-					}
-					// 生成字符串
-					var ids = array.join(",");
-					// 将字符串发送服务器 
-					$.ajax({
-		 				url : "http://localhost:8081/logistics-bos-controller/courier/deleteData",
-		                type : "POST",
-		                async:true,
-		                jsonp:'jsoncallback',
-		                contentType : "application/json;charset=UTF-8",
-		                data : JSON.stringify({
-		                	ids:ids,
-		                }),
-		                success:function(result) {
-		                    var message= JSON.stringify(result);
-		                    $("#result-box").html("操作成功");
-		                    alert("操作成功");
-		                    window.location.reload(); //刷新本页面
-		                },
-		                error:function(result){
-		                    $("#result-box").html("操作失败");
-		                    alert("操作失败");
-		                }
-		            });
-				}
-			}
-			
 		
 			//工具栏
 			var toolbar = [ {
@@ -106,11 +67,6 @@
 				text : '修改',
 				iconCls : 'icon-edit',
 				handler : doEdit
-			}, {
-				id : 'button-delete',
-				text : '作废',
-				iconCls : 'icon-cancel',
-				handler : doDelete
 			},{
 				id: 'button-search',
 				text : '查询',
@@ -232,6 +188,7 @@
 			                contentType : "application/json;charset=UTF-8",
 			                data : JSON.stringify({
 			                	cId:$("#cId").val(),
+			                	cCourierNum:$("#cCourierNum").val(),
 								cName:$("#cName").val(),
 								cTelephone:$("#cTelephone").val(),
 								cCheckPwd:$("#cCheckPwd").val(),
@@ -295,6 +252,7 @@
 							<td colspan="4">快递员信息</td>
 							<!--提供隐藏域 装载id -->
 							<input type="hidden" name="cId" id="cId"  disabled="disabled" class="easyui-numberbox" required="true"/>
+							<input type="hidden" name="cCourierNum" id="cCourierNum"  disabled="disabled" class="easyui-validatebox" required="true"/>
 						</tr>
 						<tr>
 							<td>姓名</td>

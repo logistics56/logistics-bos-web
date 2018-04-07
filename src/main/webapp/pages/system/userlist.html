@@ -27,38 +27,45 @@
 				iconCls : 'icon-cancel',
 				handler : doDelete
 			}];
-			//定义冻结列
-			var frozenColumns = [ [ {
-				field : 'cId',
-				checkbox : true,
-				rowspan : 2
-			}, {
-				field : 'cUsername',
-				title : '名称',
-				width : 80,
-				rowspan : 2
-			} ] ];
-		
 		
 			// 定义标题栏
-			var columns = [ [ {
-				field : 'cGender',
-				title : '性别',
-				width : 60,
-				rowspan : 2,
-				align : 'center'
-			}, {
-				field : 'cBirthday',
-				title : '生日',
-				width : 120,
-				rowspan : 2,
-				align : 'center'
-			}, {
-				field : 'cTelephone',
-				title : '电话',
-				width : 800,
-				rowspan : 2
-			} 
+			var columns = [ [ 
+			             	{
+								field : 'cId',
+								checkbox : true,
+							},
+							{
+								field : 'cUserNum',
+								title : '工号',
+								width : 60,
+								align : 'center',
+								formatter : function(value,row,index){
+									return row.cId ;
+								}
+							},
+							{
+								field : 'cNickname',
+								title : '姓名',
+								width : 120,
+								rowspan : 2,
+								align : 'center'
+							}, {
+								field : 'cTelephone',
+								title : '电话',
+								width : 120,
+								rowspan : 2
+							} , {
+								field : 'cPassword',
+								title : '密码',
+								width : 120,
+								rowspan : 2
+							}, {
+								field : 'cRemark',
+								title : '备注',
+								width : 120,
+								rowspan : 2,
+								align : 'center'
+							}
 			] ];
 			$(function(){
 				// 初始化 datagrid
@@ -74,7 +81,6 @@
 					toolbar : toolbar,
 					url : "http://localhost:8081/logistics-bos-controller/user/queryPageData",
 					idField : 'id', 
-					frozenColumns : frozenColumns,
 					columns : columns
 				});
 				

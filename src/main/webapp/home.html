@@ -9,94 +9,162 @@
 		<!-- 导入easyui类库 -->
 		<link rel="stylesheet" type="text/css" href="./js/easyui/themes/default/easyui.css">
 		<link rel="stylesheet" type="text/css" href="./js/easyui/themes/icon.css">
-		<link rel="stylesheet" type="text/css" href="./js/easyui/ext/portal.css">
 		<link rel="stylesheet" type="text/css" href="./css/default.css">
 		<script type="text/javascript" src="./js/easyui/jquery.easyui.min.js"></script>
-		<script type="text/javascript" src="./js/easyui/ext/jquery.portal.js"></script>
 		<script type="text/javascript" src="./js/easyui/ext/jquery.cookie.js"></script>
+		<script src="./js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
 		<script type="text/javascript">
-			$(function() {
-				panels = [ {
-					id : 'p1',
-					title : '公共栏',
-					height : 255,
-					collapsible : true,
-					href:'./pages/portal/gonggao.html'
-				}, {
-					id : 'p2',
-					title : '代办事宜',
-					height : 255,
-					collapsible : true,
-					href:'./pages/portal/daiban.html'
-				}, {
-					id : 'p3',
-					title : '预警信息',
-					height : 255,
-					collapsible : true,
-					href:'./pages/portal/yujing.html'
-				}, {
-					id : 'p4',
-					title : '系统BUG反馈',
-					height : 255,
-					collapsible : true,
-					href:'./pages/portal/bug.html'
-				}];
-				 $('#layout_portal_portal').portal({
-					border : false,
-					fit : true
-				 });
-				var state = state = 'p1,p2:p3,p4';/*冒号代表列，逗号代表行*/
-		
-				addPortalPanels(state);
-				$('#layout_portal_portal').portal('resize');
-			
+		$(function(){
+			$("#grid").datagrid({
+				iconCls : 'icon-forward',
+				fit : true,
+				border : false,
+				rownumbers : false,
+				striped : false,
+				pageList: [7,14,28],
+				pagination : true,    //显示分页栏底
+				url : 'http://localhost:8081/logistics-bos-controller/menu/queryPageData',
+				columns : columns
 			});
-			
-			function getPanelOptions(id) {
-				for ( var i = 0; i < panels.length; i++) {
-					if (panels[i].id == id) {
-						return panels[i];
-					}
-				}
-				return undefined;
-			}
-			function getPortalState() {
-				var aa=[];
-				for(var columnIndex=0;columnIndex<2;columnIndex++) {
-					var cc=[];
-					var panels=$('#layout_portal_portal').portal('getPanels',columnIndex);
-					for(var i=0;i<panels.length;i++) {
-						cc.push(panels[i].attr('id'));
-					}
-					aa.push(cc.join(','));
-				}
-				return aa.join(':');
-			}
-			function addPortalPanels(portalState) {
-				var columns = portalState.split(':');
-				for (var columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-					var cc = columns[columnIndex].split(',');
-					for (var j = 0; j < cc.length; j++) {
-						var options = getPanelOptions(cc[j]);
-						if (options) {
-							var p = $('<div/>').attr('id', options.id).appendTo('body');
-							p.panel(options);
-							$('#layout_portal_portal').portal('add', {
-								panel : p,
-								columnIndex : columnIndex
-							});
-						}
-					}
-				}
-			}
+			$("#grid2").datagrid({
+				iconCls : 'icon-forward',
+				fit : true,
+				border : false,
+				rownumbers : false,
+				striped : false,
+				pageList: [7,14,28],
+				pagination : true,    //显示分页栏底
+				url : 'http://localhost:8081/logistics-bos-controller/menu/queryPageData',
+				columns : columns
+			});
+			$("#grid3").datagrid({
+				iconCls : 'icon-forward',
+				fit : true,
+				border : false,
+				rownumbers : false,
+				striped : false,
+				pageList: [7,14,28],
+				pagination : true,    //显示分页栏底
+				url : 'http://localhost:8081/logistics-bos-controller/menu/queryPageData',
+				columns : columns2
+			});
+			$("#grid4").datagrid({
+				iconCls : 'icon-forward',
+				fit : true,
+				border : false,
+				rownumbers : false,
+				striped : false,
+				pageList: [7,14,28],
+				pagination : true,    //显示分页栏底
+				url : 'http://localhost:8081/logistics-bos-controller/menu/queryPageData',
+				columns : columns2
+			});
+		});
+		
+		// 定义列
+		var columns = [[
+						  {
+							  field : 'cName',
+							  title : '快递员',
+							  width : 80,
+							  align : 'center'
+						  },  
+						  {
+							  field : 'cDescription',
+							  title : '订单号',
+							  width : 150,
+							  align : 'center'
+						  },  
+						  {
+							  field : 'cPriority',
+							  title : '地址',
+							  width : 180,
+							  align : 'center'
+						  },  
+						  {
+							  field : 'cPage',
+							  title : '时间',
+							  width : 110,
+							  align : 'center'
+						  }
+						]];
+		// 定义列
+		var columns2 = [[
+						  {
+							  field : 'cDescription',
+							  title : '订单号',
+							  width : 160,
+							  align : 'center'
+						  },  
+						  {
+							  field : 'cPriority',
+							  title : '地址',
+							  width : 250,
+							  align : 'center'
+						  },  
+						  {
+							  field : 'cPage',
+							  title : '时间',
+							  width : 110,
+							  align : 'center'
+						  }
+						]];
 		</script>
 	</head>
 
-	<body>
-		<div id="layout_portal_portal" style="position:relative;height:600px;">
-			<div></div>
-			<div></div>
-		</div>
-	</body>
+<body>
+	
+				<div id="layout_portal_portal" style="position: relative; height: 127px; width: 1164px;" class="portal portal-noborder">
+				<table style="margin: 1% 3%;">
+					<tbody>
+						<tr>
+							<td>
+								<div class="panel portal-panel" style="display: block; width: 544px;">
+									<div class="panel-header" style="width: 532px;">
+										<div class="panel-title">待取公共栏</div>
+									</div>
+									<div id="p1" data-options="region:'center'" title="" class="panel-body portal-p" style="width: 542px; height: 226px;">
+										<table id="grid"></table>
+									</div>
+								</div>
+							</td>
+							<td>
+								<div class="panel portal-panel" style="display: block; width: 544px;">
+									<div class="panel-header" style="width: 532px;">
+										<div class="panel-title">超时预警栏</div>
+									</div>
+									<div id="p2" data-options="region:'center'" title="" class="panel-body portal-p" style="width: 542px; height: 226px;">
+										<table id="grid2"></table>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="panel portal-panel" style="display: block; width: 544px;">
+									<div class="panel-header" style="width: 532px;">
+										<div class="panel-title">个人待取公共栏</div>
+									</div>
+									<div id="p3" data-options="region:'center'" title="" class="panel-body portal-p" style="width: 542px; height: 226px;">
+										<table id="grid3"></table>
+									</div>
+								</div>
+							</td>
+							<td>
+								<div class="panel portal-panel" style="display: block; width: 544px;">
+									<div class="panel-header" style="width: 532px;">
+										<div class="panel-title">个人超时预警栏</div>
+									</div>
+									<div id="p4" data-options="region:'center'" title="" class="panel-body portal-p" style="width: 542px; height: 226px;">
+										<table id="grid4"></table>
+									</div>
+								</div>
+							</td>
+						</tr>
+		</tbody>
+	</table>
+				</div>
+		
 
+</body>
 </html>
