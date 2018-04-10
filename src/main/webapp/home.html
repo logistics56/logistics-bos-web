@@ -41,15 +41,17 @@
 				columns : columns
 			});
 			$("#grid3").datagrid({
+				
 				iconCls : 'icon-forward',
 				fit : true,
 				border : false,
 				rownumbers : false,
 				striped : false,
-				pageList: [7,14,28],
+				pageList: [6,12,24],
 				pagination : true,    //显示分页栏底
+				toolbar : toolbar,
 				url : 'http://localhost:8081/logistics-bos-controller/workBill/querySelfPageData',
-				columns : columns2,
+				columns : columns3,
 				queryParams:{cCourierNum:userNum}
 			});
 			$("#grid4").datagrid({
@@ -65,7 +67,15 @@
 				queryParams:{cCourierNum:userNum}
 			});
 		});
-		
+		//工具栏
+		var toolbar = [
+						 {
+							id : 'button-delete',
+							text : '领取',
+							iconCls : 'icon-cancel',
+							handler : doDelete
+						}          
+					];
 		// 定义列
 		var columns = [[
 						  {
@@ -120,6 +130,72 @@
 							}
 						  }
 						]];
+		
+		// 定义列
+		var columns3 = [[
+						{
+							field : 'cId',
+							checkbox : true,
+						},
+						  {
+							  field : 'orderNum',
+							  title : '订单号',
+							  width : 220,
+							  align : 'center'
+						  },  
+						  {
+							  field : 'address',
+							  title : '地址',
+							  width : 190,
+							  align : 'center'
+						  },  
+						  {
+							  field : 'time',
+							  title : '时间',
+							  width : 110,
+							  align : 'center',
+								formatter: function(value,rowData,rowIndex){
+									return new Date(value).pattern("yyyy-MM-dd HH:mm");;
+							}
+						  }
+						]];
+		
+		function doDelete(){
+			// 获取页面中所有勾选快递员 id 
+			var rows = $("#grid3").datagrid('getSelections');
+			if(rows.length != 1){
+				// 没有选中数据 
+				$.messager.alert("警告","删除数据必须选中一条数据，不可多选","warning");
+			}else{
+				// 选中数据 
+				// 获取选中所有id ，拼接字符串方法 
+				var array = new Array();
+				for(var i=0; i<rows.length; i++){
+					array.push(rows[i].cId);
+				}
+				// 生成字符串
+				var ids = array.join(",");
+				// 将字符串发送服务器 
+				$.ajax({
+	 				url : "http://localhost:8081/logistics-bos-controller/workBill/updateDataStatus",
+	                type : "POST",
+	                async:true,
+	                jsonp:'jsoncallback',
+	                contentType : "application/json;charset=UTF-8",
+	                data : JSON.stringify({
+	                	ids:ids,
+	                }),
+	                success:function(result) {
+	                    var message= JSON.stringify(result);
+	                    alert("操作成功");
+	                    location.reload(); //刷新本页面
+	                },
+	                error:function(result){
+	                    alert("操作失败");
+	                }
+	            });
+			}
+		}
 		</script>
 	</head>
 
@@ -128,28 +204,6 @@
 				<div id="layout_portal_portal" style="position: relative; height: 127px; width: 1200px;" class="portal portal-noborder">
 				<table style="margin: 1% 0;">
 					<tbody>
-						<tr>
-							<td>
-								<div class="panel portal-panel" style="display: block; width: 570px;">
-									<div class="panel-header" style="width: 570px;">
-										<div class="panel-title">待取公共栏</div>
-									</div>
-									<div id="p1" data-options="region:'center'" title="" class="panel-body portal-p" style="width: 570px; height: 226px;">
-										<table id="grid"></table>
-									</div>
-								</div>
-							</td>
-							<td>
-								<div class="panel portal-panel" style="display: block; width: 570px;">
-									<div class="panel-header" style="width: 570px;">
-										<div class="panel-title">超时预警栏</div>
-									</div>
-									<div id="p2" data-options="region:'center'" title="" class="panel-body portal-p" style="width: 570px; height: 226px;">
-										<table id="grid2"></table>
-									</div>
-								</div>
-							</td>
-						</tr>
 						<tr>
 							<td>
 								<div class="panel portal-panel" style="display: block; width: 570px;">
@@ -168,6 +222,28 @@
 									</div>
 									<div id="p4" data-options="region:'center'" title="" class="panel-body portal-p" style="width: 570px; height: 226px;">
 										<table id="grid4"></table>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="panel portal-panel" style="display: block; width: 570px;">
+									<div class="panel-header" style="width: 570px;">
+										<div class="panel-title">待取公共栏</div>
+									</div>
+									<div id="p1" data-options="region:'center'" title="" class="panel-body portal-p" style="width: 570px; height: 226px;">
+										<table id="grid"></table>
+									</div>
+								</div>
+							</td>
+							<td>
+								<div class="panel portal-panel" style="display: block; width: 570px;">
+									<div class="panel-header" style="width: 570px;">
+										<div class="panel-title">超时预警栏</div>
+									</div>
+									<div id="p2" data-options="region:'center'" title="" class="panel-body portal-p" style="width: 570px; height: 226px;">
+										<table id="grid2"></table>
 									</div>
 								</div>
 							</td>

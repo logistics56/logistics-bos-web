@@ -24,31 +24,68 @@
 
 				// 对save按钮条件 点击事件
 				$('#save').click(function() {
-//					$("#waybillForm").submit();
-					
+					//寄件人信息
+					var sendName = $("#sendName").val();
+					var sendMobile = $("#sendMobile").val();
+					var sendCompany = $("#sendCompany").val();
+					var sendAddress = $("#sendAddress").val();
+					//收件人信息
+					var recName = $("#recName").val();
+					var recMobile = $("#recMobile").val();
+					var recCompany = $("#recCompany").val();
+					var recAddress = $("#recAddress").val();
+					//快件信息
+					var goodsType = $("#goodsType").combobox('getValue');
+					var weight = $("#weight").val();
+					var remark = $("#remark").val();
+					var sendProNum = $("#sendProNum").combobox('getValue');
+					var payTypeNum = $("#payTypeNum").combobox('getValue');
+					var price = $("#price").val();
+					var vol = $("#vol").val();
 					// 对form 进行校验
-//					alert("表单数据="+$("#waybillForm").serialize());
-                    alert("表单数据="+JSON.stringify($("#waybillForm").serialize()));
+					if($('#orderForm').form('validate')){
+						$.ajax({
+			 				url : "http://localhost:8081/logistics-bos-controller/wayBill/placeAnOrder",
+			                type : "POST",
+			                async:true,
+			                jsonp:'jsoncallback',
+			                contentType : "application/json;charset=UTF-8",
+			                data:JSON.stringify({
+			            		//寄件人信息
+			            		sendName:sendName,
+			            		sendMobile:sendMobile,
+			            		sendCompany:sendCompany,
+			            		sendAddress:sendAddress,
+			            		//收件人信息
+			            		recName:recName,
+			            		recMobile:recMobile,
+			            		recCompany:recCompany,
+			            		recAddress:recAddress,
+			            		//快件信息
+			            		goodsType:goodsType,
+			            		weight:weight,
+			            		remark:remark,
+			            		sendProNum:sendProNum,
+			            		payTypeNum:payTypeNum,
+			            		price:price,
+			            		vol:vol
+			                }),
+			                success:function(result) {
+			                    var message= JSON.stringify(result);
+			                    if(result.result == 1){
+			                    	alert("下单成功");
+			                    	// 重置表单
+			    					$("#orderForm").get(0).reset();
 
-					
-					$.post("../../waybill_save.action",$("#waybillForm").serialize(),function(data){
-							// data数据格式 {success:true, msg:'xxxx'} 
-							if(data.success1){
-								// 保存成功 
-								$.messager.show({
-									title:'提示窗口',  	
-  									msg: data.msg1,
-								});
-								
-//								alert($("#waybillForm").length);
-//							    alert($("#waybillForm").get(0));
-								
-								
-								// 重置表单
-								$("#waybillForm").get(0).reset();
-								$("input[name='order.id']").val('');
-							}
-					});
+			                    }else{
+			                    	alert("下单失败");
+			                    }
+			                },
+			                error:function(result){
+			                    alert("下单失败");
+			                }
+			            });
+					}
 				});
 				
 				$('#no').click(function() {
@@ -62,8 +99,7 @@
 					// 发起Ajax请求，查询订单数据 
 					$.post("../../order_findByOrderNum.action",{orderNum: $(this).val()}, 
 					function(data){
-						// 封装结果数据  { success:true , orderData: {} }
-						if(data.success){
+						if(data.result == 1){
 							// 装载数据 
 							$("#waybillForm").form('load',data.orderData) ;
 							// 处理无法自动load 元素
@@ -86,21 +122,7 @@
 					});
 				});
 				
-				// 对运单快速录入数据进行回显
-				$("#wayBillNum").blur(function(){
-					// 发起Ajax请求 
-					$.post("../../waybill_findByWayBillNum.action",{wayBillNum: $(this).val() },
-					function(data){
-						// 封装结果数据  { success:true , wayBillData: {} }
-						if(data.success){
-							// 装载数据 
-							$("#waybillForm").form('load',data.wayBillData) ;
-//							$("input[name='wayBillNum']").val(data.wayBillData.wayBillNum);
-							//设置运单id
-                            $("input[name='id']").val(data.wayBillData.id);
-						}
-					});
-				});
+				
 			});
 		</script>
 	</head>
