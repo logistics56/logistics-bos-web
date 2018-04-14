@@ -67,21 +67,21 @@
 				// 导出Excel 按钮 
 				$("#exportXlsBtn").click(function(){
 					// 下载效果 
-					$("#searchForm").attr("action", "../../report_exportXls.action");
+					$("#searchForm").attr("action", "http://localhost:8081/logistics-bos-controller/wayBill/exportXls");
 					$("#searchForm").submit();
 				});
 				
 				// 导出 PDF 按钮 
 				$("#exportPdfBtn").click(function(){
 					// 下载效果 
-					$("#searchForm").attr("action", "../../report_exportPdf.action");
+					$("#searchForm").attr("action", "http://localhost:8081/logistics-bos-controller/wayBill/exportPdf");
 					$("#searchForm").submit();
 				});
 				
 				// 结合模板 导出 PDF 按钮 
 				$("#exportJasperPdfBtn").click(function(){
 					// 下载效果 
-					$("#searchForm").attr("action", "../../report_exportJasperPdf.action");
+					$("#searchForm").attr("action", "http://localhost:8081/logistics-bos-controller/wayBill/exportJasperPdf");
 					$("#searchForm").submit();
 				});
 			});
