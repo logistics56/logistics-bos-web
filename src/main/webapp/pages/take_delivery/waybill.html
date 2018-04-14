@@ -24,7 +24,6 @@
 
 				// 对save按钮条件 点击事件
 				$('#save').click(function() {
-					alert(123)
 					var orderId = $("#orderId").val();
 					var cOrderNum = $("#cOrderNum").val();
 					//寄件人信息
@@ -87,7 +86,7 @@
 			    					$("#orderForm").get(0).reset();
 
 			                    }else{
-			                    	alert("运单录入失败");
+			                    	alert(result.errorMsg);
 			                    }
 			                },
 			                error:function(result){
