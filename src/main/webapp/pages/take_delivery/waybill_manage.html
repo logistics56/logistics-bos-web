@@ -42,7 +42,6 @@
 							array.push(rows[i].cId);
 						}
 						var wayBillIds = array.join(",");
-						alert(wayBillIds);
 						// 将字符串发送服务器 
 						$.ajax({
 			 				url : "http://localhost:8081/logistics-bos-controller/wayBill/transit",

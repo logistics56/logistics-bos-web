@@ -53,7 +53,7 @@
 						// 判断运输状态 是否为 "出入库中转"
 						if(row.status == '出入库中转'){
 							// 在表单隐藏域保存 当前操作 中转信息 
-							$("#inOutStoreId").val(row.cId);
+							$("#inOutStoreId").val(row.transitId);
 							
 							$("#inOutStoreTransitInfoView").empty();
 							// 回显出入库中转信息 
@@ -87,7 +87,7 @@
 						// 判断运输状态 是否为 "到达网点" 
 						if(row.status == "到达网点"){
 							// 在表单隐藏域保存 当前操作 中转信息 
-							$("#deliveryId").val(row.cId);
+							$("#deliveryId").val(row.transitId);
 							
 							$("#deliveryTransitInfoView").empty();
 							
@@ -123,7 +123,7 @@
 						// 判断运输状态 ，是否为开始配送 
 						if(row.status == "开始配送"){
 							// 在表单隐藏域保存 当前操作 中转信息 
-							$("#signId").val(row.cId);
+							$("#signId").val(row.transitId);
 							
 							$("#signTransitInfoView").empty();
 							
@@ -321,25 +321,111 @@
 				// 出入库保存按钮 点击事件
 				$("#inoutStoreSave").click(function(){
 					if($("#inoutStoreForm").form('validate')){
-						$("#inoutStoreForm").submit();
+						$.ajax({
+			 				url : "http://localhost:8081/logistics-bos-controller/transitInfo/inOutStorage",
+			                type : "POST",
+			                async:true,
+			                jsonp:'jsoncallback',
+			                contentType : "application/json;charset=UTF-8",
+			                data:JSON.stringify({
+			            		transitInfoId:$("#inOutStoreId").val(),
+			            		operation:$("#operation").combobox('getValue'),
+			            		address:$("#inOutAddress").val(),
+			            		description:$("#inOutDescription").val(),
+			                }),
+			                success:function(result) {
+			                    if(result.result == 1){
+			                    	alert("录入成功");
+			                    	// 重置表单
+			    					location.reload(); //刷新本页面
+
+			                    }else{
+			                    	alert("录入失败");
+			                    }
+			                },
+			                error:function(result){
+			                    alert("录入失败");
+			                }
+			            });
 					}
 				});
 				
 				// 开始配送 保存 点击事件
 				$("#deliverySave").click(function(){
 					if($("#deliveryForm").form('validate')){
-						$("#deliveryForm").submit();
+						$.ajax({
+			 				url : "http://localhost:8081/logistics-bos-controller/transitInfo/delivery",
+			                type : "POST",
+			                async:true,
+			                jsonp:'jsoncallback',
+			                contentType : "application/json;charset=UTF-8",
+			                data:JSON.stringify({
+			            		transitInfoId:$("#deliveryId").val(),
+			            		courierNum:$("#courierNum").val(),
+			            		courierName:$("#courierName").val(),
+			            		description:$("#deliveryDescription").val(),
+			                }),
+			                success:function(result) {
+			                    if(result.result == 1){
+			                    	alert("分配成功");
+			                    	// 重置表单
+			    					location.reload(); //刷新本页面
+
+			                    }else{
+			                    	alert(result.errorMsg);
+			                    }
+			                },
+			                error:function(result){
+			                    alert("系统繁忙，请稍后重试");
+			                }
+			            });
 					}
 				});
 				
 				// 为签收录入 保存按钮 提供点击事件 
 				$("#signSave").click(function(){
+					var time = parseDate($("#signTime").datebox('getValue'));
 					if($("#signForm").form('validate')){
-						$("#signForm").submit();
+						$.ajax({
+			 				url : "http://localhost:8081/logistics-bos-controller/transitInfo/sign",
+			                type : "POST",
+			                async:true,
+			                jsonp:'jsoncallback',
+			                contentType : "application/json;charset=UTF-8",
+			                data:JSON.stringify({
+			            		transitInfoId:$("#signId").val(),
+			            		signName:$("#signName").val(),
+			            		signTime:time,
+			            		signType:$("#signType").combobox('getValue'),
+			            		errorRemark:$("#errorRemark").val(),
+			            		description:$("#signDescription").val(),
+			                }),
+			                success:function(result) {
+			                    if(result.result == 1){
+			                    	alert("签收成功");
+			                    	// 重置表单
+			    					location.reload(); //刷新本页面
+
+			                    }else{
+			                    	alert(result.errorMsg);
+			                    }
+			                },
+			                error:function(result){
+			                    alert("签收失败");
+			                }
+			            });
 					}
 				});
 
 			});
+			function parseDate(dateStr){  
+		        var strArray = dateStr.split("-");  
+		        if(strArray.length == 3){  
+		            return new Date(strArray[0], strArray[1], strArray[2]);  
+		        }else{  
+		            return new Date();  
+		        }  
+		    }  
 		</script>
 	</head>
 
@@ -356,7 +442,7 @@
 				</div>
 			</div>
 			<div region="center" style="overflow:auto;padding:5px;" border="false">
-				<form id="inoutStoreForm" method="post" action="../../inoutstore_save.action">
+				<form id="inoutStoreForm" method="post">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="2">出入库操作</td>
@@ -370,7 +456,7 @@
 						<tr>
 							<td>操作</td>
 							<td>
-								<select name="operation" class="easyui-combobox">
+								<select name="operation" id="operation" class="easyui-combobox">
 									<option value="入库">入库</option>
 									<option value="出库">出库</option>
 									<option value="到达网点">到达网点</option>
@@ -380,13 +466,13 @@
 						<tr>
 							<td>仓库或网点地址</td>
 							<td>
-								<input type="text" name="address" size="40" class="easyui-validatebox" required="true" />
+								<input type="text" name="address" id="inOutAddress" size="40" class="easyui-validatebox" required="true" />
 							</td>
 						</tr>
 						<tr>
 							<td>描述</td>
 							<td>
-								<textarea rows="3" cols="40" name="description"></textarea>
+								<textarea rows="3" cols="40" name="description" id="inOutDescription"></textarea>
 							</td>
 						</tr>
 					</table>
@@ -401,7 +487,7 @@
 				</div>
 			</div>
 			<div region="center" style="overflow:auto;padding:5px;" border="false">
-				<form id="deliveryForm" method="post" action="../../delivery_save.action">
+				<form id="deliveryForm" method="post">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="2">开始配送</td>
@@ -415,19 +501,19 @@
 						<tr>
 							<td>快递员工号</td>
 							<td>
-								<input type="text" class="easyui-validatebox" required="true" name="courierNum" />
+								<input type="text" class="easyui-validatebox" required="true" name="courierNum" id="courierNum" />
 							</td>
 						</tr>
 						<tr>
 							<td>快递员姓名</td>
 							<td>
-								<input type="text" class="easyui-validatebox"  required="true" name="courierName" />
+								<input type="text" class="easyui-validatebox"  required="true" name="courierName" id="courierName" />
 							</td>
 						</tr>
 						<tr>
 							<td>描述</td>
 							<td>
-								<textarea rows="3" cols="40" name="description"></textarea>
+								<textarea rows="3" cols="40" name="description" id="deliveryDescription"></textarea>
 							</td>
 						</tr>
 					</table>
@@ -442,7 +528,7 @@
 				</div>
 			</div>
 			<div region="center" style="overflow:auto;padding:5px;" border="false">
-				<form id="signForm" method="post" action="../../sign_save.action">
+				<form id="signForm" method="post">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="2">签收录入</td>
@@ -456,19 +542,19 @@
 						<tr>
 							<td>签收人</td>
 							<td>
-								<input type="text" required="true" name="signName" />
+								<input type="text" required="true" name="signName" id="signName" />
 							</td>
 						</tr>
 						<tr>
 							<td>签收日期</td>
 							<td>
-								<input type="text" class="easyui-datebox" required="true" name="signTime" />
+								<input type="text" class="easyui-datebox" required="true" name="signTime"  id="signTime"/>
 							</td>
 						</tr>
 						<tr>
 							<td>签收状态</td>
 							<td colspan="3">
-								<select class="easyui-combobox" style="width:150px" name="signType">
+								<select class="easyui-combobox" style="width:150px" name="signType" id="signType">
 									<option value="正常">正常</option>
 									<option value="返单">返单</option>
 									<option value="转发签收">转发签收</option>
@@ -478,13 +564,13 @@
 						<tr>
 							<td>异常备注</td>
 							<td>
-								<textarea name="errorRemark" rows="4" cols="40"></textarea>
+								<textarea name="errorRemark" id="errorRemark" rows="4" cols="40"></textarea>
 							</td>
 						</tr>
 						<tr>
 							<td>描述</td>
 							<td>
-								<textarea rows="3" cols="40" name="description"></textarea>
+								<textarea rows="3" cols="40" name="description" id="signDescription"></textarea>
 							</td>
 						</tr>
 					</table>
